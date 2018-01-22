@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0B50FE55-607B-49B1-B66B-6C2646DC6B3B}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5FE4D925-ED85-43DF-A8F1-5F9BE8AAC735}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{227F13C6-2CA8-4D7F-A64C-63583252C886}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleAppBase", "src\ConsoleAppBase.csproj", "{5EB3D12C-5705-40FC-822C-67E5AED92660}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5EB3D12C-5705-40FC-822C-67E5AED92660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EB3D12C-5705-40FC-822C-67E5AED92660}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EB3D12C-5705-40FC-822C-67E5AED92660}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EB3D12C-5705-40FC-822C-67E5AED92660}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5EB3D12C-5705-40FC-822C-67E5AED92660} = {5FE4D925-ED85-43DF-A8F1-5F9BE8AAC735}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E81C379A-F18F-4A0E-9C5D-D08388C1335D}
+	EndGlobalSection
+EndGlobal
