@@ -50,7 +50,7 @@ namespace ConsoleAppBase
         /// <returns>
         /// Return value usefull in console applications, usually 0 is OK and anything else is NOT OK.
         /// </returns>
-        protected virtual int OnExecute()
+        public virtual int OnExecute()
         {
             ShowUsage();
             return 1;
@@ -91,7 +91,6 @@ namespace ConsoleAppBase
         /// <summary>
         /// Get a list of <see cref="CommandInfo"/> descriptions of the parent commands of this instance.
         /// </summary>
-
         public IEnumerable<CommandInfo> GetParentCommands()
         {
             return GetParentCommands(GetType());
@@ -100,7 +99,6 @@ namespace ConsoleAppBase
         /// <summary>
         /// Get a list of <see cref="CommandInfo"/> descriptions of the sub-commands of this instance.
         /// </summary>
-
         public IEnumerable<CommandInfo> GetSubcommands()
         {
             return GetSubcommands(GetType());
