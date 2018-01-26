@@ -32,6 +32,11 @@ namespace ConsoleAppBase
         public IOutputProvider Output { get; set; }
 
         /// <summary>
+        /// Gets or sets the provider used to generate help information.
+        /// </summary>
+        public Help Help { get; set; }
+
+        /// <summary>
         /// Executes the command or a subcommand with parsing and validating the given arguments.
         /// </summary>
         /// <param name="args">The arguments to execute the command or subcommand with.</param>
