@@ -12,7 +12,11 @@ namespace ConsoleAppBase
 
         private void Build()
         {
-            throw new NotImplementedException();
+            if (_builder == null)
+            {
+                _builder = new HelpBuilder(_command, this);
+                _builder.BuildHelp();
+            }
         }
 
         /// <summary>
@@ -21,22 +25,34 @@ namespace ConsoleAppBase
         /// <param name="command">Command from which the help information is derived.</param>
         public Help(Command command)
         {
-            throw new NotImplementedException();
+            _command = command;
         }
 
         /// <summary>
         /// Helptext containing information on all subcommands, arguments and options.
         /// </summary>
-        public string Full { get; set; }
+        public string Full
+        {
+            get { Build(); return _full; }
+            set => _full = value;
+        }
 
         /// <summary>
         /// Version of the console application.
         /// </summary>
-        public string Version { get; set; }
+        public string Version
+        {
+            get { Build(); return _version; }
+            set => _version = value;
+        }
 
         /// <summary>
         /// Shows the usage of the current Command.
         /// </summary>
-        public string Usage { get; set; }
+        public string Usage
+        {
+            get { Build(); return _usage; }
+            set => _usage = value;
+        }
     }
 }

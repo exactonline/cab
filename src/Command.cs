@@ -2,6 +2,7 @@
 using ConsoleAppBase.Providers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace ConsoleAppBase
@@ -11,30 +12,66 @@ namespace ConsoleAppBase
     /// </summary>
     public abstract class Command
     {
+        private readonly ArgumentParser _argumentParser = new ArgumentParser();
+
+        /// <summary>
+        /// Gets or sets the description used in the help information.
+        /// </summary>
+        public string Description { get; set; }
+
         /// <summary>
         /// Gets or sets the templated identifier(s) of the help command option.
         /// </summary>
-        public string HelpOptionTemplate { get; set; }
+        public virtual string HelpOptionTemplate { get; set; } = "-h|--help";
 
         /// <summary>
         /// Gets or sets the templated identifier(s) of the version command option.
         /// </summary>
-        public string VersionOptionTemplate { get; set; }
+        public virtual string VersionOptionTemplate { get; set; } = "-v|--version";
+
+        private IAppInfoProvider _appInfo;
 
         /// <summary>
         /// Gets or sets the provider used to find information about the actual application.
         /// </summary>
-        public IAppInfoProvider AppInfo { get; set; }
+        public IAppInfoProvider AppInfo
+        {
+            get => _appInfo = _appInfo ?? new AppInfoProvider(AssemblyProvider);
+            set => _appInfo = value;
+        }
+
+        private IOutputProvider _outputProvider;
 
         /// <summary>
         /// Gets or sets the provider used to output messages.
         /// </summary>
-        public IOutputProvider Output { get; set; }
+        public IOutputProvider Output
+        {
+            protected get => _outputProvider = _outputProvider ?? new ConsoleOutputProvider();
+            set => _outputProvider = value;
+        }
+
+        private Help _help;
 
         /// <summary>
         /// Gets or sets the provider used to generate help information.
         /// </summary>
-        public Help Help { get; set; }
+        public Help Help
+        {
+            get => _help = _help ?? new Help(this);
+            set => _help = value;
+        }
+
+        private IAssemblyProvider _assemblyProvider;
+
+        /// <summary>
+        /// Gets or sets the execution starting point of the application.
+        /// </summary>
+        internal IAssemblyProvider AssemblyProvider
+        {
+            private get => _assemblyProvider = _assemblyProvider ?? new AssemblyProvider();
+            set => _assemblyProvider = value;
+        }
 
         /// <summary>
         /// Executes the command or a subcommand with parsing and validating the given arguments.
@@ -45,6 +82,24 @@ namespace ConsoleAppBase
         /// </returns>
         public int Execute(string[] args)
         {
+            try
+            {
+                if (args == null || !args.Any())
+                {
+                    ShowHelp();
+                    return 1;
+                }
+
+                return ParseAndExecute(this, args);
+            }
+            catch (Exception ex) when (
+                ex is RequiredArgumentException ||
+                ex is NoArgumentsExistException ||
+                ex is System.ComponentModel.DataAnnotations.ValidationException)
+            {
+                Output.ShowError(ex.Message);
+            }
+
             return 1;
         }
 
@@ -66,7 +121,7 @@ namespace ConsoleAppBase
         /// </summary>
         public void ShowHelp()
         {
-            throw new NotImplementedException();
+            Output.ShowInformation(Help.Full);
         }
 
         /// <summary>
@@ -74,7 +129,7 @@ namespace ConsoleAppBase
         /// </summary>
         public void ShowUsage()
         {
-            throw new NotImplementedException();
+            Output.ShowInformation(Help.Usage);
         }
 
         /// <summary>
@@ -82,7 +137,7 @@ namespace ConsoleAppBase
         /// </summary>
         public void ShowVersion()
         {
-            throw new NotImplementedException();
+            Output.ShowInformation(Help.Version);
         }
 
         /// <summary>
@@ -133,6 +188,78 @@ namespace ConsoleAppBase
             return GetRequiredArguments(GetType());
         }
 
+        /// <summary>
+        /// Gets all argument properties of a given command.
+        /// </summary>
+        /// <param name="commandType">The type of command from where the argument properties will be retrieved.</param>
+        /// <returns>key value pairs of the attribute and accompanying propertyinfo.</returns>
+        internal static Dictionary<CommandArgumentAttribute, PropertyInfo> GetArgumentProperties(Type commandType)
+        {
+            return (from p in commandType.GetRuntimeProperties()
+                    let attr = p.GetCustomAttribute<CommandArgumentAttribute>()
+                    let tmp = attr != null ? attr.Name = attr.Name ?? p.Name : null
+                    where attr != null
+                    orderby attr.Position
+                    select new { Info = p, Attribute = attr })
+                    .ToDictionary(k => k.Attribute, v => v.Info);
+        }
+
+        /// <summary>
+        /// Gets all option properties of a given command.
+        /// </summary>
+        /// <param name="commandType">The type of command from where the option properties will be retrieved.</param>
+        /// <returns>key value pairs of the attribute and accompanying propertyinfo.</returns>
+        internal static Dictionary<CommandOptionAttribute, PropertyInfo> GetOptionProperties(Type commandType)
+        {
+            return (from p in commandType.GetRuntimeProperties()
+                    let attr = p.GetCustomAttribute<CommandOptionAttribute>()
+                    let tmp = attr != null ? attr.Template = attr.Template ?? $"-{p.Name}" : null
+                    where attr != null
+                    orderby attr.Template
+                    select new { Info = p, Attribute = attr }).ToDictionary(k => k.Attribute, v => v.Info);
+        }
+
+        private int ParseAndExecute(Command command, string[] args)
+        {
+            if (args == null || !args.Any())
+            {
+                var firstRequiredArgument = GetRequiredArguments(command.GetType()).FirstOrDefault();
+                if (firstRequiredArgument != null)
+                    throw new RequiredArgumentException(firstRequiredArgument.Attribute.Name);
+
+                return command.OnExecute();
+            }
+
+            // check if subcommand 
+            var subcommands = GetSubcommands(command.GetType());
+            var firstArgument = args.First().ToLower();
+            var subCommandType = subcommands?.FirstOrDefault(c => c.Attribute.Name.ToLower() == firstArgument)?.Type;
+
+            if (subCommandType != null)
+            {
+                var subCommandInst = Activator.CreateInstance(subCommandType) as Command;
+
+                return ParseAndExecute(subCommandInst, args.Skip(1).ToArray());
+            }
+
+            if (_argumentParser.IsHelpOption(args, command))
+            {
+                command.ShowUsage();
+                return 0;
+            }
+
+            if (command.GetType().BaseType == typeof(Command) && _argumentParser.IsVersionOption(args, command))
+            {
+                command.ShowVersion();
+                return 0;
+            }
+
+            _argumentParser.Parse(args, command);
+
+            return command.OnExecute();
+        }
+
+
         private CommandInfo GetInfo(Type commandType)
         {
             var attr = commandType.GetCustomAttribute<CommandAttribute>();
@@ -153,27 +280,75 @@ namespace ConsoleAppBase
 
         private IEnumerable<CommandInfo> GetParentCommands(Type type)
         {
-            throw new NotImplementedException();
+            return GetParentCommandTypes(type, AssemblyProvider).Select(GetInfo);
         }
 
         private IEnumerable<CommandInfo> GetSubcommands(Type type)
         {
-            throw new NotImplementedException();
+            return GetSubcommandTypes(type, AssemblyProvider).Select(GetInfo);
         }
 
         private IEnumerable<CommandArgumentInfo> GetArguments(Type type)
         {
-            throw new NotImplementedException();
+            return GetArgumentProperties(type).Select(a => new CommandArgumentInfo()
+            {
+                Attribute = a.Key,
+                Type = a.Value.DeclaringType
+            });
         }
 
         private IEnumerable<CommandArgumentInfo> GetRequiredArguments(Type type)
         {
-            throw new NotImplementedException();
+            return GetArguments(type)
+                .Where(a => a.Attribute.Required);
         }
 
         private IEnumerable<CommandOptionInfo> GetOptions(Type type)
         {
-            throw new NotImplementedException();
+            return GetOptionProperties(type).Select(a => new CommandOptionInfo()
+            {
+                Attribute = a.Key,
+                Type = a.Value.DeclaringType
+            });
+        }
+
+        private static IEnumerable<Type> GetParentCommandTypes(Type commandType, IAssemblyProvider assemblyProvider)
+        {
+            if (commandType == null) return Enumerable.Empty<Type>();
+
+            var parentType = commandType.BaseType;
+
+            if (parentType == typeof(Command))
+                return Enumerable.Empty<Type>();
+
+            var commandAttr = parentType.GetCustomAttribute<CommandAttribute>();
+
+            var list = new List<Type>();
+
+            if (commandAttr != null)
+            {
+                list.Add(parentType);
+
+                var parentsOfParent = GetParentCommandTypes(parentType, assemblyProvider);
+                list.AddRange(parentsOfParent);
+            }
+            else
+            {
+                var parentsOfParentBase = GetParentCommandTypes(parentType.BaseType, assemblyProvider);
+                list.AddRange(parentsOfParentBase);
+            }
+
+            return list.ToArray();
+        }
+
+        private static IEnumerable<Type> GetSubcommandTypes(Type commandType, IAssemblyProvider assemblyProvider)
+        {
+            var assembly = assemblyProvider.MainAssembly;
+            var types = assembly.GetTypes();
+            var childCommands = types.Where(t => t.BaseType == commandType);
+            var baseCommands = childCommands.Where(t => t.GetCustomAttribute<CommandAttribute>() == null);
+            var inheritingCommands = baseCommands.SelectMany(b => GetSubcommandTypes(b, assemblyProvider));
+            return childCommands.Except(baseCommands).Concat(inheritingCommands);
         }
     }
 }
