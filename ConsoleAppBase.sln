@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{4A21
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PizzaConsoleApp", "samples\PizzaConsoleApp\PizzaConsoleApp.csproj", "{76B83422-709E-43CF-A310-8761F20F6D90}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleAppBase.Test.Unit", "test\ConsoleAppBase.Test.Unit.csproj", "{8600AF3D-F77A-4191-BEB4-2B59F0F71EEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{76B83422-709E-43CF-A310-8761F20F6D90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76B83422-709E-43CF-A310-8761F20F6D90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76B83422-709E-43CF-A310-8761F20F6D90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8600AF3D-F77A-4191-BEB4-2B59F0F71EEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8600AF3D-F77A-4191-BEB4-2B59F0F71EEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8600AF3D-F77A-4191-BEB4-2B59F0F71EEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8600AF3D-F77A-4191-BEB4-2B59F0F71EEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,6 +47,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{5EB3D12C-5705-40FC-822C-67E5AED92660} = {5FE4D925-ED85-43DF-A8F1-5F9BE8AAC735}
 		{76B83422-709E-43CF-A310-8761F20F6D90} = {4A21F059-D18D-4877-9491-CE7F38B5B301}
+		{8600AF3D-F77A-4191-BEB4-2B59F0F71EEA} = {227F13C6-2CA8-4D7F-A64C-63583252C886}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E81C379A-F18F-4A0E-9C5D-D08388C1335D}

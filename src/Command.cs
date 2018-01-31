@@ -84,12 +84,6 @@ namespace ConsoleAppBase
         {
             try
             {
-                if (args == null || !args.Any())
-                {
-                    ShowHelp();
-                    return 1;
-                }
-
                 return ParseAndExecute(this, args);
             }
             catch (Exception ex) when (
