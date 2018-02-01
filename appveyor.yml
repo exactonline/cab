@@ -1,0 +1,21 @@
+version: '{build}'
+image: Visual Studio 2017
+branches:
+  only:
+  - master
+init:
+  - git config --global core.autocrlf true
+install:
+ 
+before_build:
+  - dotnet restore
+build_script:
+  - dotnet build
+after_build:
+
+test_script:
+  - dotnet test .\test
+
+on_finish :
+
+deploy: off
