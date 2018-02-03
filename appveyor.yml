@@ -1,22 +1,28 @@
 version: '{build}'
 image: Visual Studio 2017
 branches:
-  only: 
+  only:
   - master
 environment:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
-init: 
+init:
 - git config --global core.autocrlf true
 - ps: $Env:VERSIONSUFFIX = "pre-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")
-before_build: appveyor-retry dotnet restore -v Minimal
+before_build:
+- appveyor-retry dotnet restore -v Minimal
 build:
   verbosity: minimal
-test_script: dotnet test .\test --no-build
-after_test: dotnet pack .\src --no-build --version-suffix %VERSIONSUFFIX%
+test_script:
+- dotnet test .\test --no-build
+after_test: 
+- dotnet pack .\src --no-build --version-suffix %VERSIONSUFFIX%
 artifacts:
-- path: '.\src\**\*.nupkg'
+- path: .\src\**\*.nupkg
 deploy:
 - provider: NuGet
   server: https://www.myget.org/F/consoleappbase/api/v2/package
+  symbol_server: https://www.myget.org/F/consoleappbase/symbols/api/v2/package
   api_key:
-    secure: fWvkfYfb4c48UgguAteQ+WWBI1x0EC7Tep86G8q7v95QuU67asjXMf8DlHNNkQwu
+    secure: yprEczGWtI3FLVbzoxUYVRNPJ7WTnQ9UiltbYfZKh4LlCwh/jfTy3v33bvS1pWxc
+  on:
+    branch: master
