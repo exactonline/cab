@@ -15,14 +15,13 @@ build:
 test_script:
 - dotnet test .\test --no-build
 after_test: 
-- dotnet pack .\src --no-build --version-suffix %VERSIONSUFFIX%
+- dotnet pack .\src -c Release --version-suffix %VERSIONSUFFIX%
 artifacts:
 - path: .\src\**\*.nupkg
 deploy:
 - provider: NuGet
-  server: https://www.myget.org/F/consoleappbase/api/v2/package
-  symbol_server: https://www.myget.org/F/consoleappbase/symbols/api/v2/package
+  server: https://www.myget.org/F/exact-packages/api/v2/package
   api_key:
-    secure: yprEczGWtI3FLVbzoxUYVRNPJ7WTnQ9UiltbYfZKh4LlCwh/jfTy3v33bvS1pWxc
+    secure: rKYw2Re1ZlHj5PXrgO6jBETBo0sY66Lb46g/7WLETvFQvmQ9pskg94k0k1SDwFVt
   on:
     branch: master
