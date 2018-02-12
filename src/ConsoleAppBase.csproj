@@ -9,6 +9,7 @@
     <Authors>Angelos Bousias, Laurens van den Berg</Authors>
     <Company>Exact</Company>
     <Product>Console App Base</Product>
+    <Description>Console App Base (CAB) provides a more intuitive command structure for console applications.</Description>
     <PackageLicenseUrl>https://github.com/exactonline/cab/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/exactonline/cab</PackageProjectUrl>
     <RepositoryUrl>git@github.com:exactonline/cab.git</RepositoryUrl>
