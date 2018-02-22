@@ -1,20 +1,21 @@
 version: '{build}'
 image: Visual Studio 2017
+skip_tags: true
 branches:
   only:
   - master
+nuget:  
+  disable_publish_on_pr: true
 environment:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
-nuget:  
-  disable_publish_on_pr: true
 init:
 - git config --global core.autocrlf true
 - ps: $Env:PRERELEASE_VERSION = "pre-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")
 before_build:
 - appveyor-retry dotnet restore -v Minimal
-build:
-  verbosity: minimal
+build_script:
+- dotnet build -v Minimal
 test_script:
 - dotnet test .\test --no-build
 after_test: 
@@ -23,7 +24,7 @@ artifacts:
 - path: .\src\**\*.nupkg
 deploy:
 - provider: NuGet
-  server: https://www.myget.org/F/exact-packages/api/v2/package
+  server:   
   api_key:
     secure: rKYw2Re1ZlHj5PXrgO6jBETBo0sY66Lb46g/7WLETvFQvmQ9pskg94k0k1SDwFVt
   on:
