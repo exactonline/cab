@@ -1,3 +1,6 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/61k9kjd85skwa1e3/branch/master?svg=true)](https://ci.appveyor.com/project/ExactOSS/cab/branch/master)
+[![](https://img.shields.io/nuget/v/ConsoleAppBase.svg)](https://www.nuget.org/packages/ConsoleAppBase)
+
 # CAB (ConsoleAppBase)
 
 Like many other console frameworks, CAB provides a basic layout for creating console applications. It is easy to set up, small in size, and is available for the recent .NET platforms.
