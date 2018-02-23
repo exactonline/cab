@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/3pbrt1309o28ygju/branch/master?svg=true)](https://ci.appveyor.com/project/ExactOSS/cab/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/61k9kjd85skwa1e3/branch/master?svg=true)](https://ci.appveyor.com/project/ExactOSS/cab/branch/master)
 [![](https://img.shields.io/nuget/v/ConsoleAppBase.svg)](https://www.nuget.org/packages/ConsoleAppBase)
 
 # CAB (ConsoleAppBase)
