@@ -24,7 +24,7 @@ artifacts:
 - path: .\src\**\*.nupkg
 deploy:
 - provider: NuGet
-  server:   
+  server: https://www.myget.org/F/exact-packages/api/v2/package
   api_key:
     secure: rKYw2Re1ZlHj5PXrgO6jBETBo0sY66Lb46g/7WLETvFQvmQ9pskg94k0k1SDwFVt
   on:
