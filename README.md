@@ -45,3 +45,4 @@ The `NestedCommand` can be called by `[application-name] example nested 10`, whi
 All `CommandOption` and `CommandArgument` attributes will be inherited from the `ExampleCommand` and can be reused in the child commands.
 
 For more information, checkout the wiki.
+
